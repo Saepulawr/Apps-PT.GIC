@@ -12,6 +12,7 @@ class FunctionContact {
       url: UrlApi().contactAdd,
       data: {"nama": data.nama, "telp": data.telp, "email": data.email},
       onComplete: (data, statusCode) {
+        print(data);
         if (statusCode == 200) hasil = true;
       },
     );
@@ -21,7 +22,7 @@ class FunctionContact {
   Future<bool> deleteContact({required int id}) async {
     bool hasil = false;
     await API().postData(
-      url: UrlApi().contactAdd,
+      url: UrlApi().contactDelete,
       data: {"id": id},
       onComplete: (data, statusCode) {
         if (statusCode == 200) hasil = true;
@@ -34,7 +35,7 @@ class FunctionContact {
       {required int id, required modelContact.Contact data}) async {
     bool hasil = false;
     await API().postData(
-      url: UrlApi().contactAdd,
+      url: UrlApi().contactUpdate,
       data: {"nama": data.nama, "telp": data.telp, "email": data.email},
       onComplete: (data, statusCode) {
         if (statusCode == 200) hasil = true;
@@ -43,26 +44,26 @@ class FunctionContact {
     return hasil;
   }
 
-  void showFormInputDialog(
+  Future<List<String>?> showFormInputDialog(
       {required BuildContext context,
       required String title,
       String? message,
       modelContact.Contact? contact}) {
-    showTextInputDialog(
+    return showTextInputDialog(
       context: context,
       title: title,
       message: message,
       textFields: [
         DialogTextField(
           hintText: "Name",
-          initialText: contact!.nama,
+          initialText: contact != null ? contact.nama : "",
           validator: (value) {
             if (value!.isEmpty) return "Field name cannot be empty!";
           },
         ),
         DialogTextField(
           hintText: "Phone",
-          initialText: contact!.telp,
+          initialText: contact != null ? contact.telp : "",
           keyboardType: TextInputType.phone,
           validator: (value) {
             if (value!.isEmpty) return "Field phone cannot be empty!";
@@ -70,7 +71,7 @@ class FunctionContact {
         ),
         DialogTextField(
           hintText: "Email",
-          initialText: contact!.email,
+          initialText: contact != null ? contact.email : "",
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
             if (value!.isEmpty) {

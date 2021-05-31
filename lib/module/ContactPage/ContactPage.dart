@@ -8,11 +8,13 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:outline_search_bar/outline_search_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:testptgic/module/API/Api.dart';
+import 'package:testptgic/module/ContactPage/Function/FunctionContact.dart';
 import 'package:testptgic/module/ContactPage/model/ModelContactAll.dart'
     as modelContactAll;
 import 'package:testptgic/module/ContactPage/widget/CardContactList.dart';
 import 'package:testptgic/module/headersliver/HeaderSliver.dart';
 import 'package:testptgic/module/provider/PublicProvider.dart';
+import 'package:testptgic/module/Function/PublicFunction.dart';
 
 class ContactPage extends StatefulWidget {
   ContactPage({Key? key}) : super(key: key);
@@ -41,91 +43,122 @@ class _ContactPageState extends State<ContactPage>
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        onPressed: () {},
-        // onPressed: () async {
-        //   List<TCustomer> customers = [];
-        //   if (Provider.of<ProviderPublic>(context, listen: false)
-        //           .modelCustomerAll
-        //           .total ==
-        //       null) {
-        //     await API().getData(
-        //       url: UrlApi().customer,
-        //       onComplete: (data, statusCode) {
-        //         if (statusCode == 200) {
-        //           try {
-        //             Provider.of<ProviderPublic>(context, listen: false)
-        //                 .setModelCustomerAll(
-        //                     ModelCustomerAll.fromJson(jsonDecode(data)));
-        //             customers.clear();
-        //             customers = ModelCustomerAll.fromJson(jsonDecode(data))
-        //                 .data!
-        //                 .tCustomer!;
-        //           } catch (e) {}
-        //         }
-        //       },
-        //     );
-        //   } else {
-        //     customers = Provider.of<ProviderPublic>(context, listen: false)
-        //         .modelCustomerAll
-        //         .data!
-        //         .tCustomer!;
-        //   }
-        //   late TCustomer customerSelected;
-        //   await SelectDialog.showModal<TCustomer>(
-        //     context,
-        //     label: "ContactPage for ?",
-        //     selectedValue: TCustomer(),
-        //     items: customers,
-        //     itemBuilder: (context, item, isSelected) {
-        //       return Column(children: [
-        //         ListTile(
-        //           title: Text(item.nama!),
-        //           subtitle: Text(
-        //             item.alamat!,
-        //             maxLines: 2,
-        //             overflow: TextOverflow.ellipsis,
-        //           ),
-        //         ),
-        //         Divider()
-        //       ]);
-        //     },
-        //     onFind: (text) {
-        //       List<TCustomer> cus = [];
-        //       customers.forEach((element) {
-        //         if (element.nama!.toLowerCase().contains(text.toLowerCase()) ||
-        //             element.alamat!.toLowerCase().contains(text.toLowerCase()))
-        //           cus.add(element);
-        //       });
-        //       return Future.value(cus);
-        //     },
-        //     onChange: (TCustomer selected) {
-        //       setState(() {
-        //         customerSelected = selected;
-        //       });
-        //     },
-        //   );
-        //   if (customerSelected != null) {
-        //     String result = await Navigator.of(context).push(MaterialPageRoute(
-        //       builder: (context) => ContactPageAdd(
-        //         customer: customerSelected,
-        //       ),
-        //     ));
-        //     try {
-        //       if (result == "ok") {
-        //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //           content: Text("Success"),
-        //           backgroundColor: Colors.green,
-        //         ));
-        //         _handleRefresh();
-        //       }
-        //     } catch (e) {}
-        //   }
-        // },
-      ),
+          child: Icon(Icons.add),
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
+          onPressed: () async {
+            _addNewContact();
+          }
+          // onPressed: () async {
+          //   List<TCustomer> customers = [];
+          //   if (Provider.of<ProviderPublic>(context, listen: false)
+          //           .modelCustomerAll
+          //           .total ==
+          //       null) {
+          //     await API().getData(
+          //       url: UrlApi().customer,
+          //       onComplete: (data, statusCode) {
+          //         if (statusCode == 200) {
+          //           try {
+          //             Provider.of<ProviderPublic>(context, listen: false)
+          //                 .setModelCustomerAll(
+          //                     ModelCustomerAll.fromJson(jsonDecode(data)));
+          //             customers.clear();
+          //             customers = ModelCustomerAll.fromJson(jsonDecode(data))
+          //                 .data!
+          //                 .tCustomer!;
+          //           } catch (e) {}
+          //         }
+          //       },
+          //     );
+          //   } else {
+          //     customers = Provider.of<ProviderPublic>(context, listen: false)
+          //         .modelCustomerAll
+          //         .data!
+          //         .tCustomer!;
+          //   }
+          //   late TCustomer customerSelected;
+          //   await SelectDialog.showModal<TCustomer>(
+          //     context,
+          //     label: "ContactPage for ?",
+          //     selectedValue: TCustomer(),
+          //     items: customers,
+          //     itemBuilder: (context, item, isSelected) {
+          //       return Column(children: [
+          //         ListTile(
+          //           title: Text(item.nama!),
+          //           subtitle: Text(
+          //             item.alamat!,
+          //             maxLines: 2,
+          //             overflow: TextOverflow.ellipsis,
+          //           ),
+          //         ),
+          //         Divider()
+          //       ]);
+          //     },
+          //     onFind: (text) {
+          //       List<TCustomer> cus = [];
+          //       customers.forEach((element) {
+          //         if (element.nama!.toLowerCase().contains(text.toLowerCase()) ||
+          //             element.alamat!.toLowerCase().contains(text.toLowerCase()))
+          //           cus.add(element);
+          //       });
+          //       return Future.value(cus);
+          //     },
+          //     onChange: (TCustomer selected) {
+          //       setState(() {
+          //         customerSelected = selected;
+          //       });
+          //     },
+          //   );
+          //   if (customerSelected != null) {
+          //     String result = await Navigator.of(context).push(MaterialPageRoute(
+          //       builder: (context) => ContactPageAdd(
+          //         customer: customerSelected,
+          //       ),
+          //     ));
+          //     try {
+          //       if (result == "ok") {
+          //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          //           content: Text("Success"),
+          //           backgroundColor: Colors.green,
+          //         ));
+          //         _handleRefresh();
+          //       }
+          //     } catch (e) {}
+          //   }
+          // },
+          ),
     );
+  }
+
+  Future<void> _addNewContact({modelContactAll.Contact? contact}) async {
+    final hasil = await FunctionContact().showFormInputDialog(
+        context: context, title: "Add Contact", contact: contact);
+    if (hasil != null) {
+      modelContactAll.Contact newData = modelContactAll.Contact(
+        nama: hasil[0],
+        telp: hasil[1],
+        email: hasil[2],
+      );
+      showOverlayLoading(context);
+      if (await FunctionContact().addContact(data: newData)) {
+        //berhasil menambah data
+        SnackBar(
+          backgroundColor: Colors.green,
+          content: Text("Success"),
+        ).show(context);
+        _handleRefresh();
+      } else {
+        //gagal menambah data
+        hideOverlayLoading();
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Failed to add new contacts"),
+        ).show(context);
+        _addNewContact(contact: newData);
+      }
+    }
   }
 
   Future<void> _handleRefresh() async {
