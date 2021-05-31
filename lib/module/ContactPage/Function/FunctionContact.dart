@@ -1,6 +1,9 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:flutter/material.dart';
 import 'package:testptgic/module/API/Api.dart';
 import 'package:testptgic/module/ContactPage/model/ModelContactAll.dart'
     as modelContact;
+import 'package:testptgic/module/Function/PublicFunction.dart';
 
 class FunctionContact {
   Future<bool> addContact({required modelContact.Contact data}) async {
@@ -38,5 +41,46 @@ class FunctionContact {
       },
     );
     return hasil;
+  }
+
+  void showFormInputDialog(
+      {required BuildContext context,
+      required String title,
+      String? message,
+      modelContact.Contact? contact}) {
+    showTextInputDialog(
+      context: context,
+      title: title,
+      message: message,
+      textFields: [
+        DialogTextField(
+          hintText: "Name",
+          initialText: contact!.nama,
+          validator: (value) {
+            if (value!.isEmpty) return "Field name cannot be empty!";
+          },
+        ),
+        DialogTextField(
+          hintText: "Phone",
+          initialText: contact!.telp,
+          keyboardType: TextInputType.phone,
+          validator: (value) {
+            if (value!.isEmpty) return "Field phone cannot be empty!";
+          },
+        ),
+        DialogTextField(
+          hintText: "Email",
+          initialText: contact!.email,
+          keyboardType: TextInputType.emailAddress,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return "Field Email cannot be empty!";
+            } else if (!value.isValidEmail()) {
+              return "Email not valid!";
+            }
+          },
+        )
+      ],
+    );
   }
 }
