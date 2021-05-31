@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:path/path.dart';
-import 'package:testptgic/module/API/ModelRequestToken.dart';
+import 'package:testptgic/module/API/model/ModelRequestToken.dart';
 
 const bool isDevelopment = true;
 const String API_HOST =
@@ -36,7 +36,9 @@ class API {
         try {
           API_TOKEN = modelRequestToken.data!.token!;
           hasil = true;
-        } catch (e) {}
+        } catch (e) {
+          print("Request Token Error");
+        }
       },
     );
     return hasil;

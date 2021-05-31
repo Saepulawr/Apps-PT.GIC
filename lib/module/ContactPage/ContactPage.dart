@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _ContactPageState extends State<ContactPage>
   GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey = GlobalKey();
   bool isLoading = true;
   late Size screenSize;
+
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -134,7 +136,12 @@ class _ContactPageState extends State<ContactPage>
         .setModelContactAll(ModelContactAll());
     await API().getData(
       url: UrlApi().contactAll,
+      params: {
+        "sort_field": "nama",
+        "sort_order": "ASC",
+      },
       onComplete: (data, statusCode) {
+        print(data);
         if (statusCode == 200) {
           try {
             Provider.of<PublicProvider>(context, listen: false)
@@ -151,7 +158,24 @@ class _ContactPageState extends State<ContactPage>
   Widget _buildBody() {
     ModelContactAll modelContactPageAll =
         Provider.of<PublicProvider>(context).modelContactAll;
-
+    Widget errorServer = SliverFixedExtentList(
+        itemExtent: screenSize.height * 0.8,
+        delegate: SliverChildListDelegate([
+          Center(
+              child: Text("Failed connect to server!",
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold)))
+        ]));
+    Widget loadingIndicator = SliverFixedExtentList(
+        itemExtent: screenSize.height * 0.8,
+        delegate: SliverChildListDelegate([
+          Center(
+              child: SpinKitCubeGrid(
+            color: Theme.of(context).primaryColor,
+          ))
+        ]));
     List<Widget> isi = [
       //title
       SliverFixedExtentList(
@@ -202,28 +226,36 @@ class _ContactPageState extends State<ContactPage>
 
     if (isLoading) {
       //Loading
-      isi.add(SliverFixedExtentList(
-          itemExtent: screenSize.height * 0.8,
-          delegate: SliverChildListDelegate([
-            Center(
-                child: SpinKitCubeGrid(
-              color: Theme.of(context).primaryColor,
-            ))
-          ])));
+      isi.add(loadingIndicator);
     } else {
       if (modelContactPageAll.total != null) {
         //load list
+        Map<String, List<String>> dataGroup = Map();
+        modelContactPageAll.data!.contact!.forEach((element) {
+          print(element.nama);
+          //check key with initial
+          String initial = element.nama![0].toUpperCase();
+          if (dataGroup.containsKey(initial)) {
+            //add to keys
+            dataGroup[initial]!.add(element.nama!);
+          } else {
+            //add key
+            dataGroup.addAll({
+              initial: [element.nama!]
+            });
+          }
+        });
+        List<Widget> list = _buildGroupList(dataGroup);
+        if (list != null) {
+          list.forEach((element) {
+            isi.add(element);
+          });
+        } else {
+          //error
+          isi.add(errorServer);
+        }
       } else {
-        isi.add(SliverFixedExtentList(
-            itemExtent: screenSize.height * 0.8,
-            delegate: SliverChildListDelegate([
-              Center(
-                  child: Text("Failed connect to server!",
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold)))
-            ])));
+        isi.add(errorServer);
       }
     }
 
@@ -267,7 +299,8 @@ class _ContactPageState extends State<ContactPage>
   }
 
   @override
-  void afterFirstLayout(BuildContext context) {
+  Future<void> afterFirstLayout(BuildContext context) async {
+    await API().requestToken("adm.ipul@gmail.com", "password");
     _handleRefresh();
   }
 }
