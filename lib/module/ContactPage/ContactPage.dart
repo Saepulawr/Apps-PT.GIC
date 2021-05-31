@@ -133,20 +133,20 @@ class _ContactPageState extends State<ContactPage>
       isLoading = true;
     });
     Provider.of<PublicProvider>(context, listen: false)
-        .setModelContactAll(modelContactAll.ModelContactAll());
+        .setModelContactAll(modelContactAll.ModelContact());
+    //get data from API
     await API().getData(
       url: UrlApi().contactAll,
       params: {
-        "sort_field": "nama",
+        "sort_field": "nama", //sort by nama
         "sort_order": "ASC",
       },
       onComplete: (data, statusCode) {
-        print(data);
         if (statusCode == 200) {
           try {
             Provider.of<PublicProvider>(context, listen: false)
                 .setModelContactAll(
-                    modelContactAll.ModelContactAll.fromJson(jsonDecode(data)));
+                    modelContactAll.ModelContact.fromJson(jsonDecode(data)));
           } catch (e) {}
         }
       },
@@ -157,7 +157,7 @@ class _ContactPageState extends State<ContactPage>
   }
 
   Widget _buildBody() {
-    modelContactAll.ModelContactAll modelContactPageAll =
+    modelContactAll.ModelContact modelContactPageAll =
         Provider.of<PublicProvider>(context).modelContactAll;
     Widget errorServer = SliverFixedExtentList(
         itemExtent: screenSize.height * 0.8,
@@ -233,16 +233,15 @@ class _ContactPageState extends State<ContactPage>
         //load list
         Map<String, List<modelContactAll.Contact>> dataGroup = Map();
         modelContactPageAll.data!.contact!.forEach((element) {
-          print(element.nama);
           //check key with initial
           String initial = element.nama![0].toUpperCase();
           if (dataGroup.containsKey(initial)) {
             //add to keys
-            dataGroup[initial]!.add(element.nama!);
+            dataGroup[initial]!.add(element);
           } else {
             //add key
             dataGroup.addAll({
-              initial: [element.nama!]
+              initial: [element]
             });
           }
         });

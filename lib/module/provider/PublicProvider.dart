@@ -10,9 +10,9 @@ class PublicProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  ModelContactAll _modelContactAll = ModelContactAll();
-  ModelContactAll get modelContactAll => _modelContactAll;
-  void setModelContactAll(ModelContactAll modelContactAll) {
+  ModelContact _modelContactAll = ModelContact();
+  ModelContact get modelContactAll => _modelContactAll;
+  void setModelContactAll(ModelContact modelContactAll) {
     _modelContactAll = modelContactAll;
     notifyListeners();
   }
