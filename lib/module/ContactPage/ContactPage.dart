@@ -14,24 +14,25 @@ import 'package:testptgic/module/ContactPage/model/ModelContactAll.dart'
 import 'package:testptgic/module/ContactPage/widget/CardContactList.dart';
 import 'package:testptgic/module/headersliver/HeaderSliver.dart';
 import 'package:testptgic/module/provider/PublicProvider.dart';
-import 'package:testptgic/module/Function/PublicFunction.dart';
+
+GlobalKey<ContactPageState> keyContact = GlobalKey();
 
 class ContactPage extends StatefulWidget {
   ContactPage({Key? key}) : super(key: key);
 
   @override
-  _ContactPageState createState() => _ContactPageState();
+  ContactPageState createState() => ContactPageState();
 }
 
-class _ContactPageState extends State<ContactPage>
+class ContactPageState extends State<ContactPage>
     with AfterLayoutMixin<ContactPage> {
   GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey = GlobalKey();
-  bool isLoading = true;
-  late Size screenSize;
+  bool _isLoading = true;
+  late Size _screenSize;
 
   @override
   Widget build(BuildContext context) {
-    screenSize = MediaQuery.of(context).size;
+    _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: Column(
         children: [
@@ -47,7 +48,10 @@ class _ContactPageState extends State<ContactPage>
           backgroundColor: Colors.green,
           foregroundColor: Colors.white,
           onPressed: () async {
-            FunctionContact().showFormContact(context: context, isEdit: false);
+            FunctionContact().showFormContact(
+                context: context,
+                isEdit: false,
+                onSuccess: () => handleRefresh());
           }
           // onPressed: () async {
           //   List<TCustomer> customers = [];
@@ -132,9 +136,9 @@ class _ContactPageState extends State<ContactPage>
     );
   }
 
-  Future<void> _handleRefresh() async {
+  Future<void> handleRefresh() async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
     Provider.of<PublicProvider>(context, listen: false)
         .setModelContactAll(modelContactAll.ModelContact());
@@ -144,6 +148,7 @@ class _ContactPageState extends State<ContactPage>
       params: {
         "sort_field": "nama", //sort by nama
         "sort_order": "ASC",
+        "limit": "10000"
       },
       onComplete: (data, statusCode) {
         if (statusCode == 200) {
@@ -156,7 +161,7 @@ class _ContactPageState extends State<ContactPage>
       },
     );
     setState(() {
-      isLoading = false;
+      _isLoading = false;
     });
   }
 
@@ -164,7 +169,7 @@ class _ContactPageState extends State<ContactPage>
     modelContactAll.ModelContact modelContactPageAll =
         Provider.of<PublicProvider>(context).modelContactAll;
     Widget errorServer = SliverFixedExtentList(
-        itemExtent: screenSize.height * 0.8,
+        itemExtent: _screenSize.height * 0.8,
         delegate: SliverChildListDelegate([
           Center(
               child: Text("Failed connect to server!",
@@ -174,7 +179,7 @@ class _ContactPageState extends State<ContactPage>
                       fontWeight: FontWeight.bold)))
         ]));
     Widget loadingIndicator = SliverFixedExtentList(
-        itemExtent: screenSize.height * 0.8,
+        itemExtent: _screenSize.height * 0.8,
         delegate: SliverChildListDelegate([
           Center(
               child: SpinKitCubeGrid(
@@ -232,7 +237,7 @@ class _ContactPageState extends State<ContactPage>
           )),
     ];
 
-    if (isLoading) {
+    if (_isLoading) {
       //Loading
       isi.add(loadingIndicator);
     } else {
@@ -269,7 +274,7 @@ class _ContactPageState extends State<ContactPage>
     return LiquidPullToRefresh(
         key: _refreshIndicatorKey,
         color: Theme.of(context).primaryColor,
-        onRefresh: _handleRefresh,
+        onRefresh: handleRefresh,
         child: CustomScrollView(slivers: isi));
   }
 
@@ -304,6 +309,6 @@ class _ContactPageState extends State<ContactPage>
   @override
   Future<void> afterFirstLayout(BuildContext context) async {
     await API().requestToken("adm.ipul@gmail.com", "password");
-    _handleRefresh();
+    handleRefresh();
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:testptgic/module/ContactPage/ContactPage.dart';
+import 'package:testptgic/module/ContactPage/Function/FunctionContact.dart';
 import 'package:testptgic/module/ContactPage/model/ModelContactAll.dart'
     as modelContact;
 import 'package:testptgic/module/Function/PublicFunction.dart';
@@ -30,7 +32,14 @@ class CardContactList extends StatelessWidget {
             caption: 'Edit',
             color: Colors.amber,
             icon: Icons.edit,
-            onTap: () {}),
+            onTap: () {
+              FunctionContact().showFormContact(
+                  context: context,
+                  isEdit: true,
+                  idOldData: int.parse(contact.id!),
+                  contact: contact,
+                  onSuccess: () => keyContact.currentState!.handleRefresh());
+            }),
         IconSlideAction(
             caption: 'Delete',
             color: Colors.red,

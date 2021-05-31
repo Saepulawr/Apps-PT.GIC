@@ -36,8 +36,14 @@ class FunctionContact {
     bool hasil = false;
     await API().postData(
       url: UrlApi().contactUpdate,
-      data: {"nama": data.nama, "telp": data.telp, "email": data.email},
+      data: {
+        "nama": data.nama,
+        "telp": data.telp,
+        "email": data.email,
+        "id": id,
+      },
       onComplete: (data, statusCode) {
+        print(data);
         if (statusCode == 200) hasil = true;
       },
     );
@@ -48,7 +54,8 @@ class FunctionContact {
       {required BuildContext context,
       required bool isEdit,
       int idOldData = -1,
-      modelContact.Contact? contact}) async {
+      modelContact.Contact? contact,
+      Function? onSuccess}) async {
     final hasil = await _showFormInputDialog(
         context: context,
         title: isEdit ? "Edit Contact" : "Add Contact",
@@ -74,9 +81,9 @@ class FunctionContact {
           backgroundColor: Colors.green,
           content: Text("Save data success"),
         ).show(context);
+        if (onSuccess != null) onSuccess();
       } else {
         //gagal menyimpan data
-
         SnackBar(
           backgroundColor: Colors.red,
           content: Text("Error when save data!"),
