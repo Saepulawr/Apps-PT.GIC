@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       title: 'Contact - PT.GIC',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.green,
         accentColor: Colors.orange,
       ),
     );

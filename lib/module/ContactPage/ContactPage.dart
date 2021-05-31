@@ -24,15 +24,11 @@ class _ContactPageState extends State<ContactPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   elevation: 0,
-      //   // title: Text("Contact"),
-      // ),
       body: Column(
         children: [
           Container(
             height: MediaQuery.of(context).padding.top,
-            color: Colors.red,
+            color: Theme.of(context).primaryColor,
           ),
           Expanded(child: _buildBody()),
         ],
@@ -182,49 +178,46 @@ class _ContactPageState extends State<ContactPage>
         color: Theme.of(context).primaryColor,
         onRefresh: _handleRefresh,
         child: CustomScrollView(slivers: <Widget>[
-          // SliverAppBar(
-          // title: Container(
-          //   alignment: Alignment.centerLeft,
-          //   child: Text(
-          //     "Contact",
-          //     style: TextStyle(color: Colors.black),
-          //   ),
-          // ),
-          // toolbarHeight: 30,
-          // collapsedHeight: 10,
-
-          // backgroundColor: Theme.of(context).primaryColor,
-          // expandedHeight: 200.0,
-          // flexibleSpace: FlexibleSpaceBar(
-          //   title: Text("test"),
-          //   // background: Image.asset('assets/forest.jpg', fit: BoxFit.cover),
-          // ),
-          // ),
+          //title
           SliverFixedExtentList(
             itemExtent: MediaQuery.of(context).padding.top,
             delegate: SliverChildListDelegate(
               [
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.only(left: 15),
                   alignment: Alignment.centerLeft,
                   color: Theme.of(context).primaryColor,
-                  child: Text(
-                    "Contact",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.contact_mail,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Contact",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-
+          //search
           HeaderSliver(
-              height: 60,
+              height: 40,
               child: Container(
                 color: Theme.of(context).primaryColor,
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.only(
+                  left: 10,
+                  right: 10,
+                ),
                 child: OutlineSearchBar(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                   hintText: "Cari",
@@ -235,14 +228,16 @@ class _ContactPageState extends State<ContactPage>
               )),
           SliverStickyHeader(
             header: Container(
-              height: 60.0,
               color: Theme.of(context).primaryColor,
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Header #0',
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: ListTile(
+                  leading: CircleAvatar(
+                backgroundColor: Theme.of(context).primaryColor,
+                child: Text(
+                  'A',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              )),
             ),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
