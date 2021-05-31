@@ -44,7 +44,56 @@ class FunctionContact {
     return hasil;
   }
 
-  Future<List<String>?> showFormInputDialog(
+  Future<void> showFormContact(
+      {required BuildContext context,
+      required bool isEdit,
+      int idOldData = -1,
+      modelContact.Contact? contact}) async {
+    final hasil = await _showFormInputDialog(
+        context: context,
+        title: isEdit ? "Edit Contact" : "Add Contact",
+        contact: contact);
+    if (hasil != null) {
+      modelContact.Contact newData = modelContact.Contact(
+        nama: hasil[0],
+        telp: hasil[1],
+        email: hasil[2],
+      );
+      showOverlayLoading(context);
+      bool hasilAction = false;
+      if (isEdit) {
+        //edit data
+        hasilAction = await this.updateContact(id: idOldData, data: newData);
+      } else {
+        //tambah data
+        hasilAction = await this.addContact(data: newData);
+      }
+      if (hasilAction) {
+        //berhasil menyimpan data
+        SnackBar(
+          backgroundColor: Colors.green,
+          content: Text("Save data success"),
+        ).show(context);
+      } else {
+        //gagal menyimpan data
+
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Error when save data!"),
+        ).show(context);
+        //show again dialog
+        this.showFormContact(
+            context: context,
+            isEdit: isEdit,
+            contact: newData,
+            idOldData: idOldData);
+      }
+
+      hideOverlayLoading();
+    }
+  }
+
+  Future<List<String>?> _showFormInputDialog(
       {required BuildContext context,
       required String title,
       String? message,

@@ -47,7 +47,7 @@ class _ContactPageState extends State<ContactPage>
           backgroundColor: Colors.green,
           foregroundColor: Colors.white,
           onPressed: () async {
-            _addNewContact();
+            FunctionContact().showFormContact(context: context, isEdit: false);
           }
           // onPressed: () async {
           //   List<TCustomer> customers = [];
@@ -130,35 +130,6 @@ class _ContactPageState extends State<ContactPage>
           // },
           ),
     );
-  }
-
-  Future<void> _addNewContact({modelContactAll.Contact? contact}) async {
-    final hasil = await FunctionContact().showFormInputDialog(
-        context: context, title: "Add Contact", contact: contact);
-    if (hasil != null) {
-      modelContactAll.Contact newData = modelContactAll.Contact(
-        nama: hasil[0],
-        telp: hasil[1],
-        email: hasil[2],
-      );
-      showOverlayLoading(context);
-      if (await FunctionContact().addContact(data: newData)) {
-        //berhasil menambah data
-        SnackBar(
-          backgroundColor: Colors.green,
-          content: Text("Success"),
-        ).show(context);
-        _handleRefresh();
-      } else {
-        //gagal menambah data
-        hideOverlayLoading();
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text("Failed to add new contacts"),
-        ).show(context);
-        _addNewContact(contact: newData);
-      }
-    }
   }
 
   Future<void> _handleRefresh() async {
@@ -244,10 +215,13 @@ class _ContactPageState extends State<ContactPage>
       ),
       //search
       HeaderSliver(
-          height: 50,
+          height: modelContactPageAll.total != null ? 40 : 50,
           child: Container(
             color: Theme.of(context).primaryColor,
-            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+            padding: EdgeInsets.only(
+                left: 10,
+                right: 10,
+                bottom: modelContactPageAll.total != null ? 0 : 10),
             child: OutlineSearchBar(
               borderRadius: BorderRadius.all(Radius.circular(10)),
               hintText: "Cari",
