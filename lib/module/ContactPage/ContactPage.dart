@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +8,9 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:outline_search_bar/outline_search_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:testptgic/module/API/Api.dart';
-import 'package:testptgic/module/ContactPage/model/ModelContactAll.dart';
-import 'package:testptgic/module/Function/PublicFunction.dart';
+import 'package:testptgic/module/ContactPage/model/ModelContactAll.dart'
+    as modelContactAll;
+import 'package:testptgic/module/ContactPage/widget/CardContactList.dart';
 import 'package:testptgic/module/headersliver/HeaderSliver.dart';
 import 'package:testptgic/module/provider/PublicProvider.dart';
 
@@ -133,7 +133,7 @@ class _ContactPageState extends State<ContactPage>
       isLoading = true;
     });
     Provider.of<PublicProvider>(context, listen: false)
-        .setModelContactAll(ModelContactAll());
+        .setModelContactAll(modelContactAll.ModelContactAll());
     await API().getData(
       url: UrlApi().contactAll,
       params: {
@@ -145,7 +145,8 @@ class _ContactPageState extends State<ContactPage>
         if (statusCode == 200) {
           try {
             Provider.of<PublicProvider>(context, listen: false)
-                .setModelContactAll(ModelContactAll.fromJson(jsonDecode(data)));
+                .setModelContactAll(
+                    modelContactAll.ModelContactAll.fromJson(jsonDecode(data)));
           } catch (e) {}
         }
       },
@@ -156,7 +157,7 @@ class _ContactPageState extends State<ContactPage>
   }
 
   Widget _buildBody() {
-    ModelContactAll modelContactPageAll =
+    modelContactAll.ModelContactAll modelContactPageAll =
         Provider.of<PublicProvider>(context).modelContactAll;
     Widget errorServer = SliverFixedExtentList(
         itemExtent: screenSize.height * 0.8,
@@ -230,7 +231,7 @@ class _ContactPageState extends State<ContactPage>
     } else {
       if (modelContactPageAll.total != null) {
         //load list
-        Map<String, List<String>> dataGroup = Map();
+        Map<String, List<modelContactAll.Contact>> dataGroup = Map();
         modelContactPageAll.data!.contact!.forEach((element) {
           print(element.nama);
           //check key with initial
@@ -266,7 +267,8 @@ class _ContactPageState extends State<ContactPage>
         child: CustomScrollView(slivers: isi));
   }
 
-  List<Widget> _buildGroupList(Map<String, List<String>> data) {
+  List<Widget> _buildGroupList(
+      Map<String, List<modelContactAll.Contact>> data) {
     List<Widget> wReturn = [];
     data.forEach((key, value) {
       wReturn.add(
@@ -285,12 +287,7 @@ class _ContactPageState extends State<ContactPage>
           ),
           sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-            return ListTile(
-              leading: CircleAvatar(
-                child: Text(getInitial(value[index])),
-              ),
-              title: Text(value[index]),
-            );
+            return CardContactList(contact: value[index]);
           }, childCount: value.length)),
         ),
       );
