@@ -38,6 +38,8 @@ dependencies:
   intl: ^0.17.0
   expandable: ^5.0.1
   flutter_slidable: ^0.6.0
+  outline_search_bar: ^2.1.1
+  flutter_sticky_header: ^0.6.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

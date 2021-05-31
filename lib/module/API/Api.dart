@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 const bool isDevelopment = true;
 const String API_HOST =
     isDevelopment ? "http://192.168.1.177/ptgic" : "http://localhost";
-const String API_KEY = "A6512FAF9A56402D4C5E3CC2AE97C803";
+const String API_KEY = "5AC693FBC71C70CB6A58DDA391D98E59";
 String API_TOKEN = "";
 BaseOptions _options = new BaseOptions(
   connectTimeout: 30000,
