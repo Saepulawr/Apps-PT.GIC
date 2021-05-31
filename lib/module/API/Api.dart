@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:path/path.dart';
+import 'package:testptgic/module/API/ModelRequestToken.dart';
 
 const bool isDevelopment = true;
 const String API_HOST =
-    isDevelopment ? "http://192.168.1.177/ptgic" : "http://localhost";
+    isDevelopment ? "http://192.168.1.177/api-pt.gic" : "http://localhost";
 const String API_KEY = "5AC693FBC71C70CB6A58DDA391D98E59";
 String API_TOKEN = "";
 BaseOptions _options = new BaseOptions(
@@ -17,12 +20,28 @@ String urlViewInvoice(String hashid) {
 
 class UrlApi {
   String login = API_HOST + "/api/user/login";
-  String customer = API_HOST + "/api/t_customer/all";
-  String quotationGenerate = API_HOST + "/api/t_quotation/add";
-  String quotationGetAll = API_HOST + "/api/t_quotation/all";
+  String requestToken = API_HOST + "/api/user/request_token";
+  String contactAll = API_HOST + "/api/contact/all";
 }
 
 class API {
+  Future<bool> requestToken(String username, String password) async {
+    bool hasil = false;
+    await postData(
+      url: UrlApi().requestToken,
+      data: {"username": username, "password": password},
+      onComplete: (data, statusCode) {
+        ModelRequestToken modelRequestToken =
+            ModelRequestToken.fromJson(jsonDecode(data));
+        try {
+          API_TOKEN = modelRequestToken.data!.token!;
+          hasil = true;
+        } catch (e) {}
+      },
+    );
+    return hasil;
+  }
+
   Future<void> postData(
       {required String url,
       Map<String, String>? header,

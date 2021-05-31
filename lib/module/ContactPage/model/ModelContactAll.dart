@@ -1,12 +1,12 @@
-class ContactModel {
+class ModelContactAll {
   bool? status;
   String? message;
   Data? data;
   int? total;
 
-  ContactModel({this.status, this.message, this.data, this.total});
+  ModelContactAll({this.status, this.message, this.data, this.total});
 
-  ContactModel.fromJson(Map<String, dynamic> json) {
+  ModelContactAll.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;

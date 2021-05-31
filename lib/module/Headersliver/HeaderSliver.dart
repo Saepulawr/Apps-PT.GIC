@@ -17,7 +17,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    print(overlapsContent);
     return new SizedBox.expand(child: child);
   }
 

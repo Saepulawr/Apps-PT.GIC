@@ -7,6 +7,9 @@ import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:outline_search_bar/outline_search_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:testptgic/module/API/Api.dart';
+import 'package:testptgic/module/ContactPage/model/ModelContactAll.dart';
+import 'package:testptgic/module/Function/PublicFunction.dart';
 import 'package:testptgic/module/headersliver/HeaderSliver.dart';
 import 'package:testptgic/module/provider/PublicProvider.dart';
 
@@ -21,8 +24,10 @@ class _ContactPageState extends State<ContactPage>
     with AfterLayoutMixin<ContactPage> {
   GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey = GlobalKey();
   bool isLoading = true;
+  late Size screenSize;
   @override
   Widget build(BuildContext context) {
+    screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: Column(
         children: [
@@ -125,179 +130,140 @@ class _ContactPageState extends State<ContactPage>
     setState(() {
       isLoading = true;
     });
-    // Provider.of<PublicProvider>(context, listen: false)
-    //     .setModelContactPageAll(ModelContactPageAll());
-    // await API().getData(
-    //   url: UrlApi().ContactPageGetAll,
-    //   onComplete: (data, statusCode) {
-    //     if (statusCode == 200) {
-    //       try {
-    //         Provider.of<ProviderPublic>(context, listen: false)
-    //             .setModelContactPageAll(
-    //                 ModelContactPageAll.fromJson(jsonDecode(data)));
-    //       } catch (e) {}
-    //     }
-    //   },
-    // );
+    Provider.of<PublicProvider>(context, listen: false)
+        .setModelContactAll(ModelContactAll());
+    await API().getData(
+      url: UrlApi().contactAll,
+      onComplete: (data, statusCode) {
+        if (statusCode == 200) {
+          try {
+            Provider.of<PublicProvider>(context, listen: false)
+                .setModelContactAll(ModelContactAll.fromJson(jsonDecode(data)));
+          } catch (e) {}
+        }
+      },
+    );
     setState(() {
       isLoading = false;
     });
   }
 
   Widget _buildBody() {
-    // ModelContactPageAll modelContactPageAll =
-    //     Provider.of<ProviderPublic>(context).modelContactPageAll;
-    // Widget list = Center(
-    //     child: SpinKitCubeGrid(
-    //   color: Theme.of(context).primaryColor,
-    // ));
-    // if (!isLoading) {
-    //   if (modelContactPageAll.total != null) {
-    //     list = ListView.builder(
-    //       itemBuilder: (context, index) {
-    //         // print(modelContactPageAll.data!.tContactPage![index].toJson());
-    //         return CardContactPageList(
-    //           ContactPage: modelContactPageAll.data!.tContactPage![index],
-    //         );
-    //       },
-    //       itemCount: modelContactPageAll.total,
-    //     );
-    //   } else {
-    //     list = SingleChildScrollView(
-    //       child: Container(
-    //         alignment: Alignment.center,
-    //         height: MediaQuery.of(context).size.height,
-    //         child: Text("Failed Connect To Server!"),
-    //       ),
-    //     );
-    //   }
-    // }
+    ModelContactAll modelContactPageAll =
+        Provider.of<PublicProvider>(context).modelContactAll;
+
+    List<Widget> isi = [
+      //title
+      SliverFixedExtentList(
+        itemExtent: MediaQuery.of(context).padding.top,
+        delegate: SliverChildListDelegate(
+          [
+            Container(
+              padding: EdgeInsets.only(left: 15),
+              alignment: Alignment.centerLeft,
+              color: Theme.of(context).primaryColor,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.contact_mail,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "Contact",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      //search
+      HeaderSliver(
+          height: 50,
+          child: Container(
+            color: Theme.of(context).primaryColor,
+            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+            child: OutlineSearchBar(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              hintText: "Cari",
+              searchButtonPosition: SearchButtonPosition.leading,
+              searchButtonIconColor: Colors.black,
+              cursorColor: Colors.black,
+            ),
+          )),
+    ];
+
+    if (isLoading) {
+      //Loading
+      isi.add(SliverFixedExtentList(
+          itemExtent: screenSize.height * 0.8,
+          delegate: SliverChildListDelegate([
+            Center(
+                child: SpinKitCubeGrid(
+              color: Theme.of(context).primaryColor,
+            ))
+          ])));
+    } else {
+      if (modelContactPageAll.total != null) {
+        //load list
+      } else {
+        isi.add(SliverFixedExtentList(
+            itemExtent: screenSize.height * 0.8,
+            delegate: SliverChildListDelegate([
+              Center(
+                  child: Text("Failed connect to server!",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold)))
+            ])));
+      }
+    }
 
     return LiquidPullToRefresh(
         key: _refreshIndicatorKey,
         color: Theme.of(context).primaryColor,
         onRefresh: _handleRefresh,
-        child: CustomScrollView(slivers: <Widget>[
-          //title
-          SliverFixedExtentList(
-            itemExtent: MediaQuery.of(context).padding.top,
-            delegate: SliverChildListDelegate(
-              [
-                Container(
-                  padding: EdgeInsets.only(left: 15),
-                  alignment: Alignment.centerLeft,
-                  color: Theme.of(context).primaryColor,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.contact_mail,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Contact",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          //search
-          HeaderSliver(
-              height: 40,
-              child: Container(
-                color: Theme.of(context).primaryColor,
-                padding: EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                ),
-                child: OutlineSearchBar(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  hintText: "Cari",
-                  searchButtonPosition: SearchButtonPosition.leading,
-                  searchButtonIconColor: Colors.black,
-                  cursorColor: Colors.black,
-                ),
-              )),
-          SliverStickyHeader(
-            header: Container(
-              color: Theme.of(context).primaryColor,
-              child: ListTile(
-                  leading: CircleAvatar(
-                backgroundColor: Theme.of(context).primaryColor,
-                child: Text(
-                  'A',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              )),
-            ),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, i) => ListTile(
-                  leading: CircleAvatar(
-                    child: Text('0'),
-                  ),
-                  title: Text('List tile #$i'),
-                ),
-                childCount: 20,
-              ),
-            ),
-          ),
-          SliverStickyHeader(
-            header: Container(
-              height: 60.0,
-              color: Theme.of(context).primaryColor,
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              alignment: Alignment.centerLeft,
+        child: CustomScrollView(slivers: isi));
+  }
+
+  List<Widget> _buildGroupList(Map<String, List<String>> data) {
+    List<Widget> wReturn = [];
+    data.forEach((key, value) {
+      wReturn.add(
+        SliverStickyHeader(
+          header: Container(
+            color: Theme.of(context).primaryColor,
+            child: ListTile(
+                leading: CircleAvatar(
+              backgroundColor: Theme.of(context).primaryColor,
               child: Text(
-                'Header #1',
-                style: const TextStyle(color: Colors.white),
+                key,
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
-            ),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, i) => ListTile(
-                  leading: CircleAvatar(
-                    child: Text('0'),
-                  ),
-                  title: Text('List tile #$i'),
-                ),
-                childCount: 20,
-              ),
-            ),
+            )),
           ),
-          SliverStickyHeader(
-            header: Container(
-              height: 60.0,
-              color: Theme.of(context).primaryColor,
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Header #2',
-                style: const TextStyle(color: Colors.white),
+          sliver: SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+            return ListTile(
+              leading: CircleAvatar(
+                child: Text(getInitial(value[index])),
               ),
-            ),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, i) => ListTile(
-                  leading: CircleAvatar(
-                    child: Text('0'),
-                  ),
-                  title: Text('List tile #$i'),
-                ),
-                childCount: 20,
-              ),
-            ),
-          )
-        ]));
+              title: Text(value[index]),
+            );
+          }, childCount: value.length)),
+        ),
+      );
+    });
+    return wReturn;
   }
 
   @override
