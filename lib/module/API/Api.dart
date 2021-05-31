@@ -4,9 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:path/path.dart';
 import 'package:testptgic/module/API/model/ModelRequestToken.dart';
 
-const bool isDevelopment = true;
-const String API_HOST =
-    isDevelopment ? "http://192.168.1.177/api-pt.gic" : "http://localhost";
+const bool isDevelopment = false;
+const String API_HOST = isDevelopment
+    ? "http://192.168.1.177/api-pt.gic"
+    : "https://test-ptgic.mtelektrik.id";
 const String API_KEY = "5AC693FBC71C70CB6A58DDA391D98E59";
 String API_TOKEN = "";
 BaseOptions _options = new BaseOptions(
@@ -21,11 +22,10 @@ String urlViewInvoice(String hashid) {
 class UrlApi {
   String login = API_HOST + "/api/user/login";
   String requestToken = API_HOST + "/api/user/request_token";
-  String contactAll = API_HOST + "/api/contact/all";
-  String contactDelete = API_HOST + "/api/contact/delete";
-  String contactDetail = API_HOST + "/api/contact/detail";
-  String contactUpdate = API_HOST + "/api//contact/update";
-  String contactAdd = API_HOST + "/api/contact/add";
+  String contactAll = API_HOST + "/api/daftar";
+  String contactDelete = API_HOST + "/api/hapus";
+  String contactUpdate = API_HOST + "/api/ubah";
+  String contactAdd = API_HOST + "/api/buat";
 }
 
 class API {

@@ -75,6 +75,7 @@ class _CardContactListState extends State<CardContactList> {
                     backgroundColor: Colors.green,
                     content: Text("Delete data success"),
                   ).show(context);
+                  keyContact.currentState!.handleRefresh();
                 } else {
                   //gagal
                   SnackBar(

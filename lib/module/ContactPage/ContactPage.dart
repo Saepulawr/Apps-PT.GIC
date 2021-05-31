@@ -136,7 +136,8 @@ class ContactPageState extends State<ContactPage>
     );
   }
 
-  Future<void> handleRefresh() async {
+  Future<void> handleRefresh({String querySearch = ""}) async {
+    print(querySearch);
     setState(() {
       _isLoading = true;
     });
@@ -148,9 +149,12 @@ class ContactPageState extends State<ContactPage>
       params: {
         "sort_field": "nama", //sort by nama
         "sort_order": "ASC",
-        "limit": "10000"
+        "limit": "10000",
+        "filter": querySearch,
+        "field": "nama"
       },
       onComplete: (data, statusCode) {
+        print(data);
         if (statusCode == 200) {
           try {
             Provider.of<PublicProvider>(context, listen: false)
@@ -233,6 +237,9 @@ class ContactPageState extends State<ContactPage>
               searchButtonPosition: SearchButtonPosition.leading,
               searchButtonIconColor: Colors.black,
               cursorColor: Colors.black,
+              onSearchButtonPressed: (value) =>
+                  handleRefresh(querySearch: value),
+              onClearButtonPressed: (value) => handleRefresh(),
             ),
           )),
     ];
@@ -271,6 +278,10 @@ class ContactPageState extends State<ContactPage>
       }
     }
 
+    //add margin bottom safearea
+    isi.add(SliverFixedExtentList(
+        itemExtent: MediaQuery.of(context).padding.bottom,
+        delegate: SliverChildListDelegate([Container()])));
     return LiquidPullToRefresh(
         key: _refreshIndicatorKey,
         color: Theme.of(context).primaryColor,
