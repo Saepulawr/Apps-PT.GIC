@@ -22,10 +22,10 @@ class UrlApi {
   String login = API_HOST + "/api/user/login";
   String requestToken = API_HOST + "/api/user/request_token";
   String contactAll = API_HOST + "/api/contact/all";
-  String contactDelete = API_HOST + "api/contact/delete";
-  String contactDetail = API_HOST + "api/contact/detail";
-  String contactUpdate = API_HOST + "api//contact/update";
-  String contactAdd = API_HOST + "api/contact/add";
+  String contactDelete = API_HOST + "/api/contact/delete";
+  String contactDetail = API_HOST + "/api/contact/detail";
+  String contactUpdate = API_HOST + "/api//contact/update";
+  String contactAdd = API_HOST + "/api/contact/add";
 }
 
 class API {
